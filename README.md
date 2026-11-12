@@ -1,34 +1,95 @@
-# InvoiceAI
+<div align="center">
 
-### AI-Powered Invoice Processing, OCR Automation, Business Intelligence & Reporting Platform
+# 🧾 InvoiceAI
 
-InvoiceAI is an enterprise-grade AI-powered invoice processing platform that automates invoice extraction, validation, analytics, reporting, and business intelligence using OCR, LLMs, and secure role-based access controls.
+### AI-Powered Handwritten Invoice Extraction, Business Intelligence & Reporting Platform
+
+*Upload an invoice photo. Get structured data, analytics and PDF reports — and ask questions in plain English.*
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-REST%20API-000000?logo=flask&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind-CSS-06B6D4?logo=tailwindcss&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)
+![PaddleOCR](https://img.shields.io/badge/OCR-PaddleOCR--VL%201.6-0053D6)
+![Ollama](https://img.shields.io/badge/LLM-Ollama%20%7C%20LLaMA3-black)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+
+[Overview](#-overview) •
+[Features](#-key-features) •
+[Architecture](#-architecture) •
+[Tech Stack](#-tech-stack) •
+[Getting Started](#-getting-started) •
+[Docker](#-running-with-docker) •
+[API](#-api-endpoints) •
+[Security](#-security)
+
+</div>
 
 ---
 
-## 1. Key Features
+## 📖 Table of Contents
 
-| Domain | Implemented Features |
-| :--- | :--- |
-| **Authentication & Security** | <ul><li>Google OAuth 2.0 Sign-In Integration</li><li>Secure JWT Token-based Sessions</li><li>Role-Based Access Control (Admin vs. Standard User)</li><li>Strict User Data Isolation & Protected APIs</li><li>Comprehensive System Activity & Audit Logging</li></ul> |
-| **OCR & Invoice Processing** | <ul><li>PaddleOCR-VL Visual & Text Extraction Pipeline</li><li>Local LLM (LLaMA3) Post-Processing for High Accuracy</li><li>Interactive Form Interface with Editable Invoice Fields</li><li>Structured Invoice Review Workflow (Pending, Reviewed, Corrected)</li><li>Automatic Tax calculations (CGST, SGST, IGST)</li><li>Traceable Invoice Modification History</li><li>Secure Invoice Image Upload and Storage</li></ul> |
-| **Analytics & BI Dashboard** | <ul><li>Monthly Invoice Volume Charts</li><li>Monthly Billing Revenue Trend Lines</li><li>OCR Extraction Error & Correction Analysis</li><li>GST Distribution Breakdown (CGST vs. SGST vs. IGST Pie Chart)</li><li>Top Buyers by Billing Metrics</li><li>Revenue Contribution by Buyer (Horizontal 100% Stacked Bar Chart)</li></ul> |
-| **AI Assistant (NiBo)** | <ul><li>Natural Language Querying for Invoices & Billings</li><li>Automated Revenue Trend Summarization</li><li>GST and Tax collection analysis</li><li>System & OCR Accuracy Quality Insights</li><li>On-the-fly Business Reporting</li><li>Exportable PDF Report Generation with ReportLab</li></ul> |
-| **Administration** | <ul><li>User Account Management (Status Activation/Deactivation)</li><li>Real-time User Activity Monitoring Logs</li><li>System-wide Volume & Revenue Analytics</li><li>Global Visibility over all Invoices</li></ul> |
+1. [Overview](#-overview)
+2. [Why PaddleOCR-VL 1.6?](#-why-paddleocr-vl-16)
+3. [Key Features](#-key-features)
+4. [Architecture](#-architecture)
+5. [Tech Stack](#-tech-stack)
+6. [Getting Started](#-getting-started)
+7. [Running with Docker](#-running-with-docker)
+8. [User Roles & Permissions](#-user-roles--permissions)
+9. [API Endpoints](#-api-endpoints)
+10. [Database Collections](#-database-collections)
+11. [Project Structure](#-project-structure)
+12. [Security](#-security)
+13. [Roadmap](#-roadmap)
+14. [Authors](#-authors)
 
 ---
 
-## 2. Architecture Overview
+## 🎯 Overview
 
-### System Data Flow
+**InvoiceAI** is an enterprise-grade platform that automates invoice extraction, validation, analytics and reporting. It combines **OCR**, **local LLMs** and **role-based access control** to turn photos of (often handwritten) invoices into clean, reviewable, queryable data.
+
+**Pipeline in one line:**
+`Invoice image → PaddleOCR-VL → LLaMA3 cleanup → editable review form → MongoDB → analytics, chatbot and PDF reports`
+
+---
+
+## 🏆 Why PaddleOCR-VL 1.6?
+
+We benchmarked several OCR models and versions on handwritten invoices. **PaddleOCR-VL 1.6**, the latest in the family, outperformed the alternatives on our use case, so it powers the extraction pipeline. A local **LLaMA3** model then post-processes the raw text into structured JSON, which fixes common handwriting errors and normalizes fields.
+
+---
+
+## ✨ Key Features
+
+| Domain | Features |
+| --- | --- |
+| 🔐 **Authentication & Security** | Google OAuth 2.0 sign-in · JWT sessions · Role-based access (Admin / User) · Strict per-user data isolation · Full audit logging |
+| 🔎 **OCR & Invoice Processing** | PaddleOCR-VL visual and text extraction · LLaMA3 post-processing · Editable review form · Review workflow (*Pending → Reviewed → Corrected*) · Automatic CGST / SGST / IGST calculation · Traceable edit history · Secure image storage |
+| 📊 **Analytics & BI Dashboard** | Monthly invoice volume · Monthly revenue trend · OCR error and correction analysis · GST distribution pie chart · Top buyers · Revenue contribution by buyer (100 % stacked bar) |
+| 🤖 **AI Assistant (NiBo)** | Natural-language invoice and billing queries · Revenue trend summaries · GST and tax analysis · OCR quality insights · On-the-fly business reports · PDF export via ReportLab |
+| 🛠️ **Administration** | Activate / deactivate users · Real-time activity logs · System-wide volume and revenue analytics · Global invoice visibility |
+
+---
+
+## 🏗️ Architecture
+
+### System data flow
+
 ```mermaid
 graph TD
-    User([User Client]) <-->|React Frontend| FE[Vite / React App]
+    User([User]) <-->|React Frontend| FE[Vite / React App]
     FE <-->|Axios HTTPS| BE[Flask REST API]
     BE <-->|PyMongo| DB[(MongoDB Atlas)]
+    BE <--> OCR[PaddleOCR-VL 1.6]
+    BE <--> LLM[Ollama · LLaMA3]
 ```
 
-### OCR Processing Flow
+### OCR processing flow
+
 ```mermaid
 flowchart LR
     Img[Invoice Image] --> OCR[PaddleOCR-VL]
@@ -38,7 +99,8 @@ flowchart LR
     Review --> Save[(Save to MongoDB)]
 ```
 
-### AI Assistant & Reporting Flow
+### AI assistant & reporting flow
+
 ```mermaid
 flowchart TD
     Q[User Query] --> Router[Intent Router]
@@ -51,142 +113,45 @@ flowchart TD
 
 ---
 
-## 3. Technology Stack
+## 🧰 Tech Stack
 
-### Frontend
-* **Core:** React 19, Vite, Tailwind CSS
-* **Routing & State:** React Router, React Hook Form
-* **Charts:** Chart.js, React-Chartjs-2
-* **Networking & Utilities:** Axios, Lucide React, React Toastify, PapaParse
-
-### Backend
-* **Server:** Flask, Flask-CORS, Werkzeug
-* **Database Driver:** PyMongo
-* **Authentication:** Google Auth, PyJWT, Python-Dotenv
-
-### AI / ML Core
-* **OCR engine:** PaddleOCR-VL
-* **Local Inference:** Ollama, LLaMA3 Model
-* **Model Pipeline:** Transformers, PyTorch
-
-### Database
-* **Database:** MongoDB Atlas (NoSQL)
-
-### PDF Reporting
-* **Engine:** ReportLab
+| Layer | Technologies |
+| --- | --- |
+| **Frontend** | React 19, Vite, Tailwind CSS, React Router, React Hook Form, Chart.js (react-chartjs-2), Axios, Lucide React, React Toastify, PapaParse |
+| **Backend** | Flask, Flask-CORS, Werkzeug, PyMongo, Google Auth, PyJWT, python-dotenv |
+| **AI / ML** | PaddleOCR-VL 1.6, Ollama + LLaMA3, Transformers, PyTorch |
+| **Database** | MongoDB Atlas (NoSQL) |
+| **Reporting** | ReportLab |
+| **DevOps** | Docker, Docker Compose |
 
 ---
 
-## 4. Folder Structure
-
-```text
-paddleocrVL-1.6/
-│
-├── backend_app.py          # Main Flask REST API & Routes
-├── ocr_engine.py           # PaddleOCR-VL & LLM Extraction pipeline
-├── chatbot_service.py      # NiBo AI Assistant orchestrator & cache
-├── intent_router.py        # Chatbot Query Intent Classifier
-├── analytics_queries.py    # MongoDB aggregation pipeline builders
-├── report_generator.py     # AI text summary generation
-├── pdf_generator.py        # ReportLab PDF compilation service
-├── promote_admin.py        # Script to elevate user role to Admin
-├── requirements.txt        # Python backend package requirements
-│
-├── uploads/                # Directory storing uploaded invoice images
-├── reports/                # Directory storing generated PDF reports
-│
-└── frontend/               # React Vite Frontend Application
-    ├── package.json        # Frontend dependencies & npm scripts
-    ├── vite.config.js      # Vite configuration file
-    ├── tailwind.config.js  # Tailwind CSS custom themes & layout
-    ├── index.html          # Main HTML5 entrypoint
-    └── src/
-        ├── main.jsx        # App entry point
-        ├── App.jsx         # App router & layouts
-        ├── index.css       # Global styles & design system
-        ├── components/     # Reusable widgets (Layout, ChatAssistant, ProtectedRoute)
-        ├── pages/          # Full page views (Dashboard, Analytics, AdminDashboard, etc.)
-        ├── services/       # Frontend api service module (api.js)
-        └── utils/          # Utility scripts (csvExport.js)
-```
-
----
-
-## 5. Database Collections
-
-### 1. `users`
-Tracks registered users, permissions, and session timestamps.
-* `_id`: ObjectId (Primary Key)
-* `email`: String (Unique)
-* `name`: String
-* `role`: String ("user" | "admin")
-* `is_active`: Boolean
-* `created_at`: Date
-* `last_login`: Date
-
-### 2. `invoices`
-Stores metadata, OCR parsed values, human-edited entries, and correction logs.
-* `_id`: ObjectId (Primary Key)
-* `user_id`: ObjectId (Uploader identity)
-* `file_path`: String
-* `extracted_data`: Object (Raw OCR output)
-* `invoice_data`: Object (Active/edited structure)
-  * `invoice_number`: String
-  * `invoice_date`: Date
-  * `vendor_name`: String
-  * `buyer_name`: String
-  * `items`: Array of Objects (description, quantity, rate, cgst_amount, sgst_amount, igst_amount, amount)
-  * `total_tax`: Double
-  * `total_revenue`: Double
-* `review_status`: String ("Pending Review" | "Reviewed" | "Corrected")
-* `change_history`: Array of Objects (timestamp, edited_by, diff)
-* `created_at`: Date
-
-### 3. `activity_logs`
-An immutable log auditing user actions and security events.
-* `_id`: ObjectId (Primary Key)
-* `user_id`: ObjectId
-* `user_email`: String
-* `action`: String (e.g., "ocr_upload", "invoice_edit", "login", "chatbot_query")
-* `metadata`: Object (Specific contextual variables)
-* `timestamp`: Date
-
-### 4. `reports`
-Metadata catalog for exported PDF reporting operations.
-* `_id`: ObjectId (Primary Key)
-* `user_id`: ObjectId
-* `report_type`: String (e.g., "monthly_report", "quarterly_report", "yearly_report")
-* `generated_at`: Date
-* `pdf_filename`: String
-* `summary`: String (LLM generated report overview)
-
----
-
-## 6. Installation Guide
+## 🚀 Getting Started
 
 ### Prerequisites
-* Python 3.8+ (with pip)
-* Node.js 18+ (with npm)
-* MongoDB database instance
-* Ollama local LLM runner (with `llama3` model pulled)
 
-### 1. Backend Setup
-Clone the repository, initialize the virtual environment, and install package dependencies:
+- Python 3.10+ and pip
+- Node.js 18+ and npm
+- A MongoDB instance (Atlas or local)
+- [Ollama](https://ollama.com) with the `llama3` model
+- A Google OAuth client ID
+
+### 1. Clone and set up the backend
+
 ```bash
-# Clone the repository
-git clone <repo-url>
-cd paddleocrVL-1.6
+git clone https://github.com/boomiikas/Handwritten-invoice-text-extraction.git
+cd Handwritten-invoice-text-extraction
 
-# Create and activate virtual environment
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
-# Install requirements
 pip install -r requirements.txt
 ```
 
-### 2. Environment Setup
-Create a `.env` file in the root directory:
+### 2. Configure environment variables
+
+Create `.env` in the project root (see `.env.sample`):
+
 ```env
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/
 DB_NAME=invoice_db
@@ -194,7 +159,7 @@ COLLECTION_NAME=invoices
 GOOGLE_CLIENT_ID=your-google-oauth-client-id
 JWT_SECRET_KEY=your-secure-jwt-secret-key
 
-# Chatbot & Report Settings
+# Chatbot & report settings
 CHAT_CACHE_TTL_MINUTES=5
 CHAT_MAX_HISTORY=50
 REPORTS_DIRECTORY=reports
@@ -202,197 +167,248 @@ MAX_REPORT_RECORDS=100
 OLLAMA_MODEL=llama3
 REPORT_RETENTION_DAYS=30
 ```
-Create a `.env` file in the frontend directory:
+
+Create `frontend/.env`:
+
 ```env
 VITE_API_URL=http://localhost:5000
 VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
-
 ```
 
-### 3. Frontend Setup
-Navigate into the `frontend` folder, install package dependencies, and start the development server:
+### 3. Start Ollama
+
+```bash
+ollama serve
+ollama pull llama3
+ollama list
+```
+
+### 4. Run the backend
+
+```bash
+python backend_app.py
+```
+
+### 5. Run the frontend
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### 4. Running Backend REST API
-Ensure your virtual environment is active, then run:
-```bash
-python backend_app.py
-```
+Open <http://localhost:5173>.
 
-### 5. Running Ollama Local LLM
-Ensure Ollama is running and has the `llama3` model loaded:
-```bash
-# Start Ollama service
-ollama serve
+### 6. (Optional) Promote a user to admin
 
-# Confirm LLaMA3 model is pulled
-ollama pull llama3
-ollama list
+```bash
+python promote_admin.py
 ```
 
 ---
 
-## 7. Running with Docker
+## 🐳 Running with Docker
 
-InvoiceAI can be completely containerized and run locally using Docker and Docker Compose. This simplifies environment setup by bundling the React Frontend, Flask Backend, MongoDB database, and Ollama service together.
+One command brings up the frontend, backend, MongoDB and Ollama together.
 
-### 1. Prerequisites
-- **Docker Desktop** installed on your host system.
-- **NVIDIA GPU Support (Optional for GPU Acceleration):**
-  - Install the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
-  - Ensure Docker Desktop has GPU support enabled (Settings > Resources > WSL integration / Docker engine configuration).
-
-### 2. Services Overview
-The `docker-compose.yml` configures the following containers:
-- **`frontend` (Node 20):** Dev server hosting the React client app, exposed at `http://localhost:5173`.
-- **`backend` (Python 3.10-slim):** Flask REST API backend, exposed at `http://localhost:5000`. Runs CPU-based or GPU-accelerated OCR model processing.
-- **`mongodb` (Mongo Latest):** Database engine, exposed at `http://localhost:27017` with persistent volumes.
-- **`ollama` (Ollama Latest):** Running the local LLaMA3 LLM for post-processing and text summarization, exposed at `http://localhost:11434`.
-
-### 3. GPU Acceleration & CPU Fallback
-- The Docker Compose configuration includes GPU resource reservations.
-- If NVIDIA GPU capabilities are detected, the backend container automatically passes CUDA access to PyTorch.
-- If no GPU is available, the system automatically falls back to CPU execution using OpenMP (`libgomp1`) without code changes.
-
-### 4. Model Persistence & Cache Volumes
-To avoid re-downloading large AI models on container restarts, persistent named Docker volumes are configured:
-- **`hf_cache`:** Caches the `PaddlePaddle/PaddleOCR-VL-1.6` Hugging Face model parameters.
-- **`ollama_data`:** Caches downloaded Ollama models (e.g. `llama3`).
-- **`mongo_data`:** Stores MongoDB data collections.
-- **`uploads_data`, `reports_data`, `invoice_slices_data`:** Stores user-uploaded media files and reports.
-
-### 5. Running the Application
-
-Ensure you have created a `.env` file in the project root containing your API configurations (e.g., `GOOGLE_CLIENT_ID`, `JWT_SECRET_KEY`).
-
-#### Build the Docker Images
 ```bash
 docker compose build
-```
-
-#### Start All Services (Detached Mode)
-```bash
 docker compose up -d
 ```
 
-#### Rebuild and Start Services
+| Service | Image / runtime | URL |
+| --- | --- | --- |
+| `frontend` | Node 20 | <http://localhost:5173> |
+| `backend` | Python 3.10-slim (Flask + OCR) | <http://localhost:5000> |
+| `mongodb` | Mongo | `localhost:27017` |
+| `ollama` | Ollama (LLaMA3) | <http://localhost:11434> |
+
+**Useful commands**
+
 ```bash
-docker compose up --build
+docker compose up --build   # rebuild and start
+docker compose ps           # check health (wait for "healthy")
+docker compose down         # stop and remove containers
 ```
 
-#### Stop Services and Remove Containers
-```bash
-docker compose down
+**GPU or CPU.** Compose reserves GPU resources. If an NVIDIA GPU is available (with the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)), PyTorch uses CUDA. Otherwise it falls back to CPU automatically with no code changes.
+
+**Persistent volumes** avoid re-downloading models after restarts:
+
+| Volume | Stores |
+| --- | --- |
+| `hf_cache` | `PaddlePaddle/PaddleOCR-VL-1.6` weights |
+| `ollama_data` | Ollama models (e.g. `llama3`) |
+| `mongo_data` | MongoDB data |
+| `uploads_data`, `reports_data`, `invoice_slices_data` | Uploaded images, reports, image slices |
+
+> Make sure a root `.env` with `GOOGLE_CLIENT_ID` and `JWT_SECRET_KEY` exists before starting.
+
+---
+
+## 👥 User Roles & Permissions
+
+| Action | Standard user | Administrator |
+| --- | :---: | :---: |
+| Upload invoice image | ✅ | ✅ |
+| Edit / review extracted invoice | ✅ own only | ✅ all |
+| View analytics dashboard | ✅ own data | ✅ all |
+| Ask NiBo chatbot | ✅ own data | ✅ all systems |
+| Generate and export PDF reports | ✅ | ✅ |
+| Access admin dashboard and logs | ❌ | ✅ |
+| Manage users (block / activate) | ❌ | ✅ |
+| Global system-wide visibility | ❌ | ✅ |
+
+---
+
+## 🔌 API Endpoints
+
+<details open>
+<summary><b>Authentication & Invoices</b></summary>
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/api/auth/google` | Exchange a Google OAuth credential for a JWT |
+| GET | `/api/invoices` | Invoice history (scoped by role) |
+| POST | `/api/invoices` | Upload an invoice image and run the OCR pipeline |
+| GET | `/api/invoices/<id>` | Fetch one invoice |
+| PUT | `/api/invoices/<id>` | Submit corrections |
+| DELETE | `/api/invoices/<id>` | Delete an invoice |
+
+</details>
+
+<details open>
+<summary><b>Analytics, Chat & Reports</b></summary>
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/analytics` | User-scoped analytics |
+| GET | `/api/admin/analytics` | Global system KPIs |
+| POST | `/api/chat/query` | Ask NiBo a question |
+| POST | `/api/chat/report` | Generate a PDF report from chat context |
+| GET | `/api/reports` | List generated reports |
+| GET | `/api/reports/download/<filename>` | Download a report |
+| DELETE | `/api/reports/<id>` | Delete a report record |
+
+</details>
+
+<details open>
+<summary><b>Admin</b></summary>
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/admin/users` | List all users |
+| PUT | `/api/admin/users/<id>/status` | Activate or block a user |
+| GET | `/api/admin/activity` | System audit logs |
+
+</details>
+
+---
+
+## 🗄️ Database Collections
+
+<details>
+<summary><b>users</b> — accounts, roles, session timestamps</summary>
+
+`_id` · `email` (unique) · `name` · `role` (`user` \| `admin`) · `is_active` · `created_at` · `last_login`
+
+</details>
+
+<details>
+<summary><b>invoices</b> — OCR output, edited data, correction history</summary>
+
+`_id` · `user_id` · `file_path` · `extracted_data` (raw OCR) · `invoice_data` (active / edited) · `review_status` (`Pending Review` \| `Reviewed` \| `Corrected`) · `change_history` (timestamp, edited_by, diff) · `created_at`
+
+`invoice_data` contains: `invoice_number`, `invoice_date`, `vendor_name`, `buyer_name`, `items[]` (description, quantity, rate, cgst_amount, sgst_amount, igst_amount, amount), `total_tax`, `total_revenue`.
+
+</details>
+
+<details>
+<summary><b>activity_logs</b> — immutable audit trail</summary>
+
+`_id` · `user_id` · `user_email` · `action` (e.g. `ocr_upload`, `invoice_edit`, `login`, `chatbot_query`) · `metadata` · `timestamp`
+
+</details>
+
+<details>
+<summary><b>reports</b> — exported PDF catalog</summary>
+
+`_id` · `user_id` · `report_type` (`monthly_report`, `quarterly_report`, `yearly_report`) · `generated_at` · `pdf_filename` · `summary` (LLM overview)
+
+</details>
+
+---
+
+## 📁 Project Structure
+
+```
+Handwritten-invoice-text-extraction/
+├── backend_app.py          # Flask REST API and routes
+├── ocr_engine.py           # PaddleOCR-VL + LLM extraction pipeline
+├── chatbot_service.py      # NiBo assistant orchestrator and cache
+├── intent_router.py        # Chatbot intent classifier
+├── analytics_queries.py    # MongoDB aggregation builders
+├── report_generator.py     # LLM report summaries
+├── pdf_generator.py        # ReportLab PDF compilation
+├── promote_admin.py        # Elevate a user to admin
+├── streamlitocr.py         # Streamlit OCR demo
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── .env.sample
+├── invoice_slices/         # Sliced invoice image regions
+├── reports/                # Generated PDF reports
+└── frontend/               # React + Vite client
+    ├── package.json
+    ├── vite.config.js
+    ├── tailwind.config.js
+    └── src/
+        ├── main.jsx
+        ├── App.jsx
+        ├── components/     # Layout, ChatAssistant, ProtectedRoute
+        ├── pages/          # Dashboard, Analytics, AdminDashboard, ...
+        ├── services/       # api.js
+        └── utils/          # csvExport.js
 ```
 
-#### Confirming Service Status
-The containers use automated health checks. You can check the health status by running:
-```bash
-docker compose ps
-```
-Once all services show `(healthy)`, you can access the frontend in your browser at `http://localhost:5173`.
+> Other root files (`demo.py`, `copy2.py`, `dynamic.py`, `para.py`, `end.py`, `changellm.py`, sample images and JSON) are experiments and test artifacts from OCR model comparison.
 
 ---
 
-## 8. User Roles & Permissions
+## 🔒 Security
 
-| Action / Permission | Standard User (`role = "user"`) | Administrator (`role = "admin"`) |
-| :--- | :---: | :---: |
-| **Upload Invoice Image** | ✓ | ✓ |
-| **Edit / Review Extracted Invoice** | ✓ (Own only) | ✓ (All) |
-| **View Analytics Dashboard** | ✓ (Own calculations) | ✓ (All) |
-| **Ask NiBo Chatbot Queries** | ✓ (Own data context) | ✓ (All systems) |
-| **Generate & Export PDF Reports** | ✓ | ✓ |
-| **Access Admin Dashboard & Logs** | ✗ | ✓ |
-| **Manage Users (Block / Activate)** | ✗ | ✓ |
-| **Global System-Wide Visibility** | ✗ | ✓ |
+- **JWT verification.** Every protected route needs a valid Bearer token, and expiry is enforced.
+- **RBAC.** Admin routes are blocked for standard users at the backend.
+- **Ownership validation.** Users cannot read, edit or query other users' invoices.
+- **Path-traversal protection.** Report download paths are sanitized.
+- **Immutable audit logs.** Logins, edits and admin actions are stored in `activity_logs`.
+- **Google token integrity.** OAuth credentials are verified with Google's `id_token` endpoint.
 
 ---
 
-## 9. API Endpoints
+## 🗺️ Roadmap
 
-### Authentication
-* `POST /api/auth/google` - Exchanges Google OAuth credential token for JWT.
-
-### Invoices
-* `GET /api/invoices` - Retrieve invoice history (scoped or global depending on user role).
-* `POST /api/invoices` - Upload a new invoice image and run the PaddleOCR extraction pipeline.
-* `GET /api/invoices/<id>` - Fetch details of a single invoice.
-* `PUT /api/invoices/<id>` - Submit updates / correction inputs for an invoice.
-* `DELETE /api/invoices/<id>` - Delete an invoice.
-
-### Analytics
-* `GET /api/analytics` - Retrieve user-scoped business analytics metrics.
-* `GET /api/admin/analytics` - Retrieve global, system-wide KPIs.
-
-### Reports
-* `POST /api/chat/report` - Trigger on-the-fly PDF generation based on chatbot analytics context.
-* `GET /api/reports` - Fetch list of previously generated reports.
-* `GET /api/reports/download/<filename>` - Download a generated PDF report file.
-* `DELETE /api/reports/<id>` - Permanently delete a report record.
-
-### NiBo AI Chat
-* `POST /api/chat/query` - Send query strings to NiBo chatbot for analysis, NLP summaries, and prompt execution.
-
-### Admin Tools
-* `GET /api/admin/users` - Fetch all system user accounts.
-* `PUT /api/admin/users/<id>/status` - Activate or block a user account.
-* `GET /api/admin/activity` - Fetch system audit activity logs.
+- [ ] Scheduled weekly / monthly reports delivered by email
+- [ ] Send invoice copies and payment reminders from the app
+- [ ] Multi-language OCR support
+- [ ] Billing and tax-cycle forecasting
+- [ ] Vendor risk analysis to flag price variations and duplicate invoices
 
 ---
 
-## 10. Interface Placeholders
+## 👩‍💻 Authors
 
-### Login Page
-`[Screenshot Placeholder: Secure Google OAuth and email-based login screen with high-contrast emerald colors]`
+| Name | Links |
+| --- | --- |
+| **Boomika S** | [GitHub](https://github.com/boomiikas) · [LinkedIn](https://www.linkedin.com/in/boomika-s-981b55311/) |
+| **Nithya Shri S K** | [GitHub](https://github.com/NithyaShriSK) · [LinkedIn](https://www.linkedin.com/in/nithya-shri-s-k-670531353/) |
 
-### Dashboard
-`[Screenshot Placeholder: User dashboard highlighting statistics widgets, recent uploads list, and quick navigation headers]`
-
-### Invoice Extraction
-`[Screenshot Placeholder: Image-to-text extraction screen showing the original image alongside an editable, side-by-side data review panel]`
-
-### Analytics
-`[Screenshot Placeholder: Interactive chart views showcasing Monthly volume, Billing revenue, Pie Chart GST spreads, and the Buyer Revenue Contribution Stacked Bar]`
-
-### Admin Dashboard
-`[Screenshot Placeholder: Admin dashboard providing access to user management list, active session metrics, and live audit logging feeds]`
-
-### NiBo AI Assistant
-`[Screenshot Placeholder: Floating chatbot assistant window with quick query buttons, chat bubbles, and formatted business reports]`
-
-### Reports
-`[Screenshot Placeholder: Historical view of generated reports ready for local PDF download or server deletion]`
+Forked from [NithyaShriSK/Handwritten-invoice-extarction-using-PaddleocrVL1.6](https://github.com/NithyaShriSK/Handwritten-invoice-extarction-using-PaddleocrVL1.6).
 
 ---
 
-## 11. Security Features
+<div align="center">
 
-* **JWT Verification:** All protected API routes require a valid Bearer JWT. Session expiry is strictly enforced.
-* **Role-Based Access Control (RBAC):** Admin routes are blocked from standard users at the backend level.
-* **Ownership Validation:** Standard users cannot access, edit, or query invoices belonging to other accounts.
-* **Report Access Security:** Prevent Path Traversal attacks by sanitizing inputs on directory requests.
-* **Immutable Logs:** System events, login details, edits, and administrative overrides are saved permanently in `activity_logs`.
-* **Google Token Integrity:** Google OAuth credentials are authenticated via Google's `id_token` verification endpoint.
+⭐ If you find this useful, consider starring the repo!
 
----
-
-## 12. Future Enhancements
-
-* **Automated Scheduler:** Run weekly or monthly automated reports and deliver them straight to user emails.
-* **Email Delivery:** Send invoice copies and payment reminders to clients directly from the application.
-* **Multi-Language OCR support:** Add multi-language character matching models to PaddleOCR.
-* **Business Forecasting:** Implement historical models to project future billing, tax cycles, and seasonal revenue.
-* **Vendor Risk Analysis:** Audit supplier invoice patterns to flag potential price variations or duplication errors.
-
----
-
-## 13. Authors & License
-
-### Authors
-* **Boomika S** - [GitHub](https://github.com/boomiikas) | [LinkedIn](https://www.linkedin.com/in/boomika-s-981b55311/)
-* **Nithya Shri S K** - [GitHub](https://github.com/NithyaShriSK) | [LinkedIn](https://www.linkedin.com/in/nithya-shri-s-k-670531353/)
+</div>
